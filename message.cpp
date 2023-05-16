@@ -8,10 +8,8 @@ void message::send(event_type event, void* buf, int len){
     
     int header = event << 24 | len;
     
-    pthread_mutex_lock(&mutex);
     write(fd[1], &header, sizeof(int));
     write(fd[1], buf, len);
-    pthread_mutex_unlock(&mutex);
 }
 
 int message::receive(event_type* event, void* buf, int max_len){

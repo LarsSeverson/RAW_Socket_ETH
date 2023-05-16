@@ -1,6 +1,14 @@
 #pragma once
 #include <sys/socket.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <netpacket/packet.h>
+#include <net/ethernet.h>
+#include <string.h>
+#include <netinet/in.h>
 
 typedef unsigned char _uc;
 

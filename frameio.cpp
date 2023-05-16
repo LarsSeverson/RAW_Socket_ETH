@@ -1,12 +1,4 @@
 #include "frameio.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <netpacket/packet.h>
-#include <net/ethernet.h>
-#include <string.h>
-#include <netinet/in.h>
 
 int frameio::open_net(const char* device){
 	const int len = 80;
