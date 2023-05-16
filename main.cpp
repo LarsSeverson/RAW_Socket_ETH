@@ -7,12 +7,13 @@
 frameio net;
 message arp;
 
+int count = 1;
 frame frame_buf;
 _uc buf[1500];
-event_type event;
 
 void get_arp(){
-	arp.receive(&event, buf, sizeof(buf));
+	arp.receive(buf, sizeof(buf));
+	printf("%d. ", count++);
 	printf("got an ARP %s\n", buf[7]==1? "request":"reply");
 	for(int i = 0; i < 42; ++i){
 		printf("%02x ", buf[i]);
@@ -26,7 +27,7 @@ void get_arp(){
 void protocol_loop(){
 	int n = net.rec_frame(&frame_buf, sizeof(frame_buf));
 		if(n >= 42 && (frame_buf.protocol[0] << 8 | frame_buf.protocol[1]) == 0x806){
-			arp.send(PACKET, frame_buf.payload, n);
+			arp.send(frame_buf.payload, n);
 			get_arp();
 		}
 }
