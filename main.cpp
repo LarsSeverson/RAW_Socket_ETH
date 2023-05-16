@@ -7,32 +7,28 @@
 frameio net;
 message arp;
 
-pthread_t loop_thread, arp_thread;
+frame frame_buf;
+_uc buf[1500];
+event_type event;
 
-
-void* protocol_loop(void* arg){
-	frame buf;
-	while(1){
-		int n = net.rec_frame(&buf, sizeof(buf));
-		if(n >= 42 && (buf.protocol[0] << 8 | buf.protocol[1]) == 0x806){
-			arp.send(PACKET, buf.payload, n);
+void get_arp(){
+	arp.receive(&event, buf, sizeof(buf));
+	printf("got an ARP %s\n", buf[7]==1? "request":"reply");
+	for(int i = 0; i < 42; ++i){
+		printf("%02x ", buf[i]);
+		if((i + 1) == 22){
+			printf("\n");
 		}
 	}
+	printf("\n");
 }
-void* arp_loop(void* arg){
-	_uc buf[1500];
-	event_type event;
-	while(1){
-		arp.receive(&event, buf, sizeof(buf));
-		printf("got an ARP %s\n", buf[7]==1? "request":"reply");
-		for(int i = 0; i < 42; ++i){
-			printf("%02x ", buf[i]);
-			if((i + 1) == 22){
-				printf("\n");
-			}
+
+void protocol_loop(){
+	int n = net.rec_frame(&frame_buf, sizeof(frame_buf));
+		if(n >= 42 && (frame_buf.protocol[0] << 8 | frame_buf.protocol[1]) == 0x806){
+			arp.send(PACKET, frame_buf.payload, n);
+			get_arp();
 		}
-		printf("\n");
-	}
 }
 
 int main(){
@@ -41,8 +37,8 @@ int main(){
 		printf("Could not open device... (ifconfig).");
 		return 0;
 	}
-	pthread_create(&loop_thread, NULL, protocol_loop, NULL);
-	pthread_create(&arp_thread, NULL, arp_loop, NULL);
-	while(1){}
+	while(1){
+		protocol_loop();
+	}
 	return 0;
 }
