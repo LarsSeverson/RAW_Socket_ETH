@@ -30,3 +30,11 @@ private:
 	int sock;
 
 };
+
+
+struct frame{
+	_uc dst_mac[6];
+	_uc src_mac[6];
+	_uc protocol[2];
+	_uc payload[1500];
+};
