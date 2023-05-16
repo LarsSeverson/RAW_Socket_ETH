@@ -19,7 +19,6 @@ void* protocol_loop(void* arg){
 		}
 	}
 }
-
 void* arp_loop(void* arg){
 	_uc buf[1500];
 	event_type event;
